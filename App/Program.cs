@@ -1,12 +1,21 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Flurl.Http;
 
 namespace App
 {
     class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            while(true)
+            {
+            var resp = await "http://dockerimagetest-api/WeatherForecast".GetStringAsync();
+            Console.WriteLine(resp);
+            Console.WriteLine("-------");
+            Thread.Sleep(3000);
+            }
         }
     }
 }

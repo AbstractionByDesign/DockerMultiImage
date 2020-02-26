@@ -1,14 +1,25 @@
 version: '3'
 services:
-  dataidentity:
-    image: stephengarnercontainers.azurecr.io/dockerimagetest:production
-    container_name: dockerimagetest
+  dockerimagetest-api:
+    image: stephengarnercontainers.azurecr.io/dockerimagetest-api:development
+    container_name: dockerimagetest-api
     ports:
       - "80:80"
     restart: unless-stopped
     privileged: true
     depends_on:
       - ouroboros
+
+  dockerimagetest-app:
+    image: stephengarnercontainers.azurecr.io/dockerimagetest-app:development
+    container_name: dockerimagetest-app
+    restart: unless-stopped
+    privileged: true
+    depends_on:
+      - dockerimagetest-api
+      - ouroboros
+    links:
+      - dockerimagetest-api
 
   ouroboros:
     container_name: ouroboros
@@ -19,7 +30,7 @@ services:
       CLEANUP: "true"
       LATEST: "true"
       INTERVAL: 300
-      MONITOR: "dockerimagetest"
+      MONITOR: "dockerimagetest-api dockerimagetest-app"
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
