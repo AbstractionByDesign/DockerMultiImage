@@ -1,0 +1,26 @@
+version: '3'
+services:
+  dataidentity:
+    image: stephengarnercontainers.azurecr.io/dockerimagetest:production
+    container_name: dockerimagetest
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    privileged: true
+    depends_on:
+      - ouroboros
+
+  ouroboros:
+    container_name: ouroboros
+    hostname: ouroboros
+    image: pyouroboros/ouroboros
+    environment:
+      LOG_LEVEL: info
+      CLEANUP: "true"
+      LATEST: "true"
+      INTERVAL: 300
+      MONITOR: "dockerimagetest"
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $HOME/.docker/config.json:/root/.docker/config.json
